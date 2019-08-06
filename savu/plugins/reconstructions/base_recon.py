@@ -85,7 +85,7 @@ class BaseRecon(Plugin):
     def base_dynamic_data_info(self):
         if 'init_vol' in self.parameters.keys() and \
                                              self.parameters['init_vol']:
-            if len(self.parameters['init_vol'].split('.')) is 3:
+            if len(self.parameters['init_vol'].split('.')) == 3:
                 name, temp, self.rep_dim = self.parameters['init_vol']
                 self.parameters['init_vol'] = name
             self.nIn += 1
@@ -109,7 +109,7 @@ class BaseRecon(Plugin):
 
         self.main_dir = in_data[0].get_data_patterns()['SINOGRAM']['main_dir']
         self.angles = in_meta_data.get('rotation_angle')
-        if len(self.angles.shape) is not 1:
+        if len(self.angles.shape) != 1:
             self.scan_dim = in_data[0].get_data_dimension_by_axis_label('scan')
         self.slice_dirs = out_data[0].get_slice_dimensions()
 

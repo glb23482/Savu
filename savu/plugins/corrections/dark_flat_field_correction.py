@@ -71,6 +71,8 @@ class DarkFlatFieldCorrection(BaseCorrection, CpuPlugin):
             self._sino_pre_process(inData, tile, rot_dim)
 
         self.flat_minus_dark = self.flat - self.dark
+        self.flat_minus_dark[(np.where(self.flat_minus_dark <= 0.0))] = 1.0 # remove zeros/negatives in the denominator if any
+        
         self.warn = self.parameters['warn_proportion']
         self.low = self.parameters['lower_bound']
         self.high = self.parameters['upper_bound']
@@ -91,7 +93,7 @@ class DarkFlatFieldCorrection(BaseCorrection, CpuPlugin):
         self.mfp = pData._get_max_frames_process()
         self.reps_at = int(np.ceil(length/float(self.mfp)))
 
-        if len(full_shape) is 3:
+        if len(full_shape) == 3:
             self.convert_size = lambda a, b, x, pad: np.pad(
                     np.tile(x[a:b], tile), pad, 'edge')
         else:
@@ -105,7 +107,11 @@ class DarkFlatFieldCorrection(BaseCorrection, CpuPlugin):
         data = data[0]
         dark = self.convert_size(self.dark)
         flat_minus_dark = self.convert_size(self.flat_minus_dark)
-        data = np.nan_to_num((data-dark)/flat_minus_dark)
+        # Adding some afitional checks
+        nomin = data-dark
+        nomin[(np.where(nomin < 0.0))] = 1.0 # remove negatives
+        data = np.true_divide(nomin,flat_minus_dark)
+        #data = np.nan_to_num((data-dark)/flat_minus_dark) # was previously
         self.__data_check(data)
         return data
 
