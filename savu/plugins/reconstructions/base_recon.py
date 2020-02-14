@@ -32,6 +32,7 @@ MAX_OUTER_PAD = 2.1
 class BaseRecon(Plugin):
     """
     """
+
     def __init__(self, name='BaseRecon'):
         super(BaseRecon, self).__init__(name)
         self.nOut = 1
@@ -144,7 +145,7 @@ class BaseRecon(Plugin):
         cor = mData.get('centre_of_rotation')
         sdirs = inData.get_slice_dimensions()
         total_frames = np.prod([inData.get_shape()[i] for i in sdirs])
-        if total_frames != len(cor):
+        if total_frames > len(cor):
             cor = np.tile(cor, total_frames/len(cor))
         return cor
 
@@ -485,6 +486,6 @@ class BaseRecon(Plugin):
             size along given axis. Default: 0.95.
         :param log_func: Override the default log \
             function. Default: 'np.nan_to_num(-np.log(sino))'.
-        :param vol_shape: Override the size of the reconstuction volume with an \
+        :param vol_shape: Override the size of the reconstruction volume with an \
         integer value. Default: 'fixed'.
         '''
